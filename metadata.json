@@ -1,0 +1,6 @@
+{
+  "name": "Gestor de Fichadas y Horas Extras RRHH",
+  "description": "Sistema profesional de importación de fichadas Excel, cálculo exacto de horas trabajadas y horas extras para Recursos Humanos.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
