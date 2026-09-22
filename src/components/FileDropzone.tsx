@@ -13,6 +13,7 @@ export const FileDropzone: React.FC<FileDropzoneProps> = ({
   error,
 }) => {
   const [isDragOver, setIsDragOver] = useState(false);
+  const [localError, setLocalError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -48,9 +49,10 @@ export const FileDropzone: React.FC<FileDropzoneProps> = ({
     const validExtensions = ['.xlsx', '.xls'];
     const hasValidExt = validExtensions.some(ext => file.name.toLowerCase().endsWith(ext));
     if (!hasValidExt) {
-      alert('Por favor selecciona un archivo con extensión válida de Excel (.xlsx o .xls)');
+      setLocalError('Por favor selecciona un archivo con extensión válida de Excel (.xlsx o .xls)');
       return;
     }
+    setLocalError(null);
     onFileSelected(file);
   };
 
@@ -70,10 +72,10 @@ export const FileDropzone: React.FC<FileDropzoneProps> = ({
         </p>
       </div>
 
-      {error && (
+      {(localError || error) && (
         <div className="w-full mb-3.5 p-3.5 bg-rose-50 border border-rose-200 rounded-2xl flex items-center gap-3 text-rose-900 text-xs shadow-sm">
           <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
-          <p className="font-semibold">{error}</p>
+          <p className="font-semibold">{localError || error}</p>
         </div>
       )}
 

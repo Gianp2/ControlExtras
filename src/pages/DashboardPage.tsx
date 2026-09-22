@@ -1,8 +1,10 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   Flame,
   ArrowLeft,
   Upload,
+  FileSpreadsheet,
+  Calendar,
 } from 'lucide-react';
 import {
   ImportResult,
@@ -44,6 +46,14 @@ export const DashboardPage: React.FC = () => {
     selectedEmployee || showErrorsModal || showRulesModal || showUploadModal
   );
   useLockBodyScroll(isAnyModalOpen);
+
+  // Fallback safety to guarantee scrolling is never stuck
+  useEffect(() => {
+    if (!isAnyModalOpen) {
+      document.body.style.overflow = '';
+      document.body.style.paddingRight = '';
+    }
+  }, [isAnyModalOpen]);
 
   // Toasts
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
@@ -225,13 +235,7 @@ export const DashboardPage: React.FC = () => {
   }, [importResult, filters]);
 
   return (
-    <div
-      className={
-        !importResult
-          ? 'h-screen w-screen overflow-hidden bg-slate-100 flex flex-col font-sans antialiased text-slate-800 select-none'
-          : 'min-h-screen bg-slate-100 flex flex-col font-sans antialiased text-slate-800'
-      }
-    >
+    <div className="min-h-screen bg-slate-100 flex flex-col font-sans antialiased text-slate-800">
       {/* Navigation Header */}
       <Navbar
         importResult={importResult}
@@ -247,8 +251,8 @@ export const DashboardPage: React.FC = () => {
 
       {/* Main Content Area */}
       {!importResult ? (
-        /* Empty State / Initial Dropzone - Strictly zero scroll */
-        <main className="flex-1 flex flex-col justify-center items-center px-4 overflow-hidden">
+        /* Empty State / Initial Dropzone */
+        <main className="flex-1 flex flex-col justify-center items-center px-4 py-8 sm:py-12">
           <FileDropzone
             onFileSelected={handleProcessFile}
             isLoading={isLoading}
@@ -257,45 +261,49 @@ export const DashboardPage: React.FC = () => {
         </main>
       ) : (
         /* Active Dashboard View */
-        <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
-          {/* Top Header Card with active file info and quick actions */}
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white border border-slate-200/90 rounded-2xl px-5 py-3.5 shadow-xs">
-            {/* Left: Back button */}
-            <div className="flex items-center gap-2.5 w-full sm:w-auto justify-between sm:justify-start">
-              <button
-                id="btn-back-to-upload-bar"
-                onClick={() => setImportResult(null)}
-                className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-slate-900 rounded-xl text-xs font-semibold transition-colors flex items-center gap-1.5 cursor-pointer border border-slate-200/80"
-                title="Volver a la pantalla inicial para cargar otro archivo"
-              >
-                <ArrowLeft className="w-3.5 h-3.5 text-slate-500" />
-                <span>Cargar otro Excel</span>
-              </button>
-
-              <span className="sm:hidden text-xs font-mono font-semibold text-slate-700 truncate max-w-[150px]">
-                {importResult.fileName}
-              </span>
+        <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-7 space-y-6">
+          {/* Top Context Header with generous spacing and clear hierarchy */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-1">
+            <div>
+              <div className="flex items-center gap-3">
+                <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+                  Panel de Liquidación y Control
+                </h1>
+                <span className="px-2.5 py-0.5 rounded-full text-xs font-bold font-mono bg-emerald-100 text-emerald-800 border border-emerald-200/90 shadow-2xs">
+                  {importResult.employees.length} {importResult.employees.length === 1 ? 'empleado' : 'empleados'}
+                </span>
+              </div>
+              <div className="flex flex-wrap items-center gap-3 text-xs text-slate-500 mt-1.5 font-medium">
+                <span className="flex items-center gap-1.5 text-slate-700">
+                  <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                  <span className="font-mono font-semibold">{importResult.fileName}</span>
+                </span>
+                <span className="text-slate-300">•</span>
+                <span className="flex items-center gap-1.5 text-slate-600">
+                  <Calendar className="w-3.5 h-3.5 text-sky-500 shrink-0" />
+                  <span>{importResult.periodText || 'Período completo'}</span>
+                </span>
+              </div>
             </div>
 
-            {/* Center: File and Period Status */}
-            <div className="hidden sm:flex items-center justify-center gap-2 text-xs text-slate-600">
-              <span className="text-slate-400 font-medium">Archivo:</span>
-              <span className="font-semibold text-slate-900 font-mono bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200">
-                {importResult.fileName}
-              </span>
-              <span className="text-slate-300">•</span>
-              <span className="text-slate-500">{importResult.periodText || 'Período Completo'}</span>
-            </div>
-
-            {/* Right: Quick actions */}
-            <div className="flex items-center space-x-2 w-full sm:w-auto justify-end">
+            {/* Quick Action Buttons with ample breathing room */}
+            <div className="flex items-center gap-2.5 shrink-0">
               <button
                 onClick={() => setShowUploadModal(true)}
-                className="px-3 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 rounded-xl text-xs font-medium transition-colors flex items-center gap-1.5 cursor-pointer"
+                className="px-3.5 py-2 bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 border border-slate-200/90 hover:border-slate-300 rounded-xl text-xs font-bold shadow-2xs transition-all flex items-center gap-2 cursor-pointer"
                 title="Cargar una nueva versión o reemplazo de este archivo"
               >
                 <Upload className="w-3.5 h-3.5 text-slate-500" />
                 <span>Reemplazar archivo</span>
+              </button>
+              <button
+                id="btn-back-to-upload-bar"
+                onClick={() => setImportResult(null)}
+                className="px-3.5 py-2 bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-900 border border-slate-200/90 hover:border-slate-300 rounded-xl text-xs font-bold shadow-2xs transition-all flex items-center gap-2 cursor-pointer"
+                title="Volver a la pantalla inicial para cargar otro archivo"
+              >
+                <ArrowLeft className="w-3.5 h-3.5 text-slate-400" />
+                <span>Cargar otro</span>
               </button>
             </div>
           </div>

@@ -1,6 +1,5 @@
 import React from 'react';
 import { X, CheckCircle, Clock, Flame, Calculator, Sparkles } from 'lucide-react';
-import { useLockBodyScroll } from '../utils/useLockBodyScroll';
 
 interface RulesExplainerModalProps {
   isOpen: boolean;
@@ -11,8 +10,6 @@ export const RulesExplainerModal: React.FC<RulesExplainerModalProps> = ({
   isOpen,
   onClose,
 }) => {
-  useLockBodyScroll(isOpen);
-
   if (!isOpen) return null;
 
   return (

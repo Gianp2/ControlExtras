@@ -13,7 +13,6 @@ import {
   ArrowRight,
 } from 'lucide-react';
 import { EmployeeSummary } from '../types';
-import { useLockBodyScroll } from '../utils/useLockBodyScroll';
 
 interface EmployeeDetailModalProps {
   employee: EmployeeSummary | null;
@@ -28,8 +27,6 @@ export const EmployeeDetailModal: React.FC<EmployeeDetailModalProps> = ({
   onExportExcel,
   onExportPdf,
 }) => {
-  useLockBodyScroll(Boolean(employee));
-
   if (!employee) return null;
 
   return (

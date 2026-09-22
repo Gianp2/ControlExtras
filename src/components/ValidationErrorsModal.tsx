@@ -1,7 +1,6 @@
 import React from 'react';
 import { X, AlertTriangle, AlertCircle, CheckCircle2, ShieldAlert } from 'lucide-react';
 import { ValidationError } from '../types';
-import { useLockBodyScroll } from '../utils/useLockBodyScroll';
 
 interface ValidationErrorsModalProps {
   isOpen: boolean;
@@ -14,8 +13,6 @@ export const ValidationErrorsModal: React.FC<ValidationErrorsModalProps> = ({
   onClose,
   errors,
 }) => {
-  useLockBodyScroll(isOpen);
-
   if (!isOpen) return null;
 
   const errorCount = errors.filter(e => e.severity === 'error').length;
