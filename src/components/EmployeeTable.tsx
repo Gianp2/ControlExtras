@@ -38,46 +38,46 @@ export const EmployeeTable: React.FC<EmployeeTableProps> = ({
   }
 
   return (
-    <div className="bg-white border border-slate-200 rounded-xl shadow-2xs overflow-hidden">
+    <div className="bg-white border border-slate-200/90 rounded-2xl shadow-sm overflow-hidden">
       <div className="overflow-x-auto">
         <table className="w-full text-left text-xs border-collapse">
           <thead>
-            <tr className="bg-slate-900 text-white font-semibold uppercase tracking-wider text-[11px] border-b border-slate-800">
-              <th className="py-3 px-4">Empleado</th>
-              <th className="py-3 px-3 text-center">N° Legajo</th>
-              <th className="py-3 px-3 text-center">Días Trab.</th>
-              <th className="py-3 px-3 text-center">Hs. Totales</th>
-              <th className="py-3 px-3 text-center">Hs. Normales</th>
-              <th className="py-3 px-3 text-center text-amber-300">Hs. Extras</th>
-              <th className="py-3 px-3 text-center">Estado</th>
-              <th className="py-3 px-4 text-right">Acciones</th>
+            <tr className="bg-slate-900 text-white font-semibold uppercase tracking-wider text-[10px] border-b border-slate-800">
+              <th className="py-3.5 px-4 font-bold">Empleado</th>
+              <th className="py-3.5 px-3 text-center font-bold">N° Legajo</th>
+              <th className="py-3.5 px-3 text-center font-bold">Días Trab.</th>
+              <th className="py-3.5 px-3 text-center font-bold">Hs. Totales</th>
+              <th className="py-3.5 px-3 text-center font-bold text-emerald-400">Hs. Normales</th>
+              <th className="py-3.5 px-3 text-center font-bold text-amber-300">Hs. Extras</th>
+              <th className="py-3.5 px-3 text-center font-bold">Estado</th>
+              <th className="py-3.5 px-4 text-right font-bold">Acciones</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100 text-slate-700">
             {employees.map((emp) => {
               const hasOvertime = emp.totalOvertimeMinutes > 0;
-              const hasErrors = emp.totalDaysWithErrors > 0;
 
               return (
                 <tr
                   key={emp.employee.id}
+                  id={`row-employee-${emp.employee.legajo || emp.employee.id}`}
                   onClick={() => onSelectEmployee(emp)}
                   className="hover:bg-slate-50/90 transition-colors cursor-pointer group"
                 >
                   {/* Name with initials avatar */}
-                  <td className="py-2.5 px-4">
-                    <div className="flex items-center space-x-2.5">
+                  <td className="py-3 px-4">
+                    <div className="flex items-center space-x-3">
                       <div
-                        className={`w-7 h-7 rounded-lg flex items-center justify-center text-[11px] font-bold shrink-0 ${
+                        className={`w-8 h-8 rounded-xl flex items-center justify-center text-[11px] font-bold shrink-0 shadow-2xs ${
                           hasOvertime
-                            ? 'bg-amber-100 text-amber-900 border border-amber-200'
-                            : 'bg-slate-100 text-slate-700'
+                            ? 'bg-gradient-to-br from-amber-100 to-amber-200 text-amber-950 border border-amber-300/80'
+                            : 'bg-gradient-to-br from-slate-100 to-slate-200 text-slate-700 border border-slate-300/60'
                         }`}
                       >
                         {emp.employee.name.slice(0, 2).toUpperCase()}
                       </div>
                       <div>
-                        <span className="font-bold text-slate-900 group-hover:text-emerald-700 transition-colors block">
+                        <span className="font-bold text-slate-900 group-hover:text-emerald-700 transition-colors block text-xs sm:text-sm">
                           {emp.employee.name}
                         </span>
                         <span className="sm:hidden font-mono text-[10px] text-slate-500">
@@ -88,48 +88,48 @@ export const EmployeeTable: React.FC<EmployeeTableProps> = ({
                   </td>
 
                   {/* Legajo */}
-                  <td className="py-2.5 px-3 text-center font-mono font-bold text-slate-700">
-                    <span className="px-2 py-0.5 bg-slate-100 border border-slate-200/90 rounded-md text-[11px] text-slate-800">
+                  <td className="py-3 px-3 text-center font-mono font-bold">
+                    <span className="inline-flex items-center px-2.5 py-1 bg-slate-100 text-slate-800 border border-slate-200 rounded-lg text-xs tracking-tight shadow-2xs">
                       {emp.employee.legajo}
                     </span>
                   </td>
 
                   {/* Dias trabajados */}
-                  <td className="py-2.5 px-3 text-center font-medium text-slate-800 font-mono">
+                  <td className="py-3 px-3 text-center font-semibold text-slate-700 font-mono text-xs">
                     {emp.totalDaysWorked}
                   </td>
 
                   {/* Horas Trabajadas */}
-                  <td className="py-2.5 px-3 text-center font-bold text-slate-900 font-mono">
+                  <td className="py-3 px-3 text-center font-bold text-slate-900 font-mono text-xs">
                     {emp.totalWorkedFormatted}
                   </td>
 
                   {/* Horas Normales */}
-                  <td className="py-2.5 px-3 text-center font-medium text-emerald-800 font-mono">
+                  <td className="py-3 px-3 text-center font-semibold text-emerald-800 font-mono text-xs">
                     {emp.totalNormalFormatted}
                   </td>
 
                   {/* Horas Extras */}
-                  <td className="py-2.5 px-3 text-center font-mono">
+                  <td className="py-3 px-3 text-center font-mono">
                     {hasOvertime ? (
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-amber-100 text-amber-950 border border-amber-300 rounded font-bold">
-                        <Flame className="w-3 h-3 text-amber-600" />
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-amber-100 text-amber-950 border border-amber-300 rounded-lg font-black text-xs shadow-2xs">
+                        <Flame className="w-3.5 h-3.5 text-amber-600 shrink-0" />
                         {emp.totalOvertimeFormatted}
                       </span>
                     ) : (
-                      <span className="text-slate-400 font-normal">00:00</span>
+                      <span className="text-slate-400 font-normal text-xs">00:00</span>
                     )}
                   </td>
 
                   {/* Estado Badge */}
-                  <td className="py-2.5 px-3 text-center">
+                  <td className="py-3 px-3 text-center">
                     {hasOvertime ? (
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-50 text-amber-800 border border-amber-200">
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-50 text-amber-900 border border-amber-200 shadow-2xs">
                         <Flame className="w-3 h-3 text-amber-600" />
                         Con Extras
                       </span>
                     ) : (
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 shadow-2xs">
                         <CheckCircle2 className="w-3 h-3 text-emerald-600" />
                         Normal
                       </span>
@@ -137,27 +137,27 @@ export const EmployeeTable: React.FC<EmployeeTableProps> = ({
                   </td>
 
                   {/* Actions */}
-                  <td className="py-2.5 px-4 text-right">
-                    <div className="flex items-center justify-end space-x-1" onClick={(e) => e.stopPropagation()}>
+                  <td className="py-3 px-4 text-right">
+                    <div className="flex items-center justify-end space-x-1.5" onClick={(e) => e.stopPropagation()}>
                       <button
                         onClick={() => onExportEmployeeExcel(emp)}
                         title="Descargar Excel de este empleado"
-                        className="p-1.5 text-slate-400 hover:text-emerald-700 hover:bg-slate-100 rounded-md transition-colors"
+                        className="p-1.5 text-slate-400 hover:text-emerald-700 hover:bg-emerald-50 rounded-lg transition-colors cursor-pointer border border-transparent hover:border-emerald-200"
                       >
                         <FileSpreadsheet className="w-4 h-4" />
                       </button>
                       <button
                         onClick={() => onExportEmployeePdf(emp)}
                         title="Generar PDF individual con firma"
-                        className="p-1.5 text-slate-400 hover:text-indigo-700 hover:bg-slate-100 rounded-md transition-colors"
+                        className="p-1.5 text-slate-400 hover:text-indigo-700 hover:bg-indigo-50 rounded-lg transition-colors cursor-pointer border border-transparent hover:border-indigo-200"
                       >
                         <FileText className="w-4 h-4" />
                       </button>
                       <button
                         onClick={() => onSelectEmployee(emp)}
-                        className="px-2 py-1 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-md transition-colors flex items-center gap-0.5 text-[11px] font-medium ml-1"
+                        className="px-2.5 py-1 text-slate-700 hover:text-white bg-slate-100 hover:bg-slate-900 border border-slate-200 hover:border-slate-900 rounded-lg transition-all flex items-center gap-1 text-[11px] font-bold ml-1 cursor-pointer shadow-2xs"
                       >
-                        <span>Detalle</span>
+                        <span>Ver Ficha</span>
                         <ChevronRight className="w-3.5 h-3.5" />
                       </button>
                     </div>

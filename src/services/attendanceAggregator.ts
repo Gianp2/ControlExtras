@@ -23,28 +23,63 @@ export function aggregateAttendanceData(
 ): ImportResult {
   const { records, errors, companyName, periodText, rawSheetNames, totalRowsScanned } = rawResult;
 
-  // 1. Group records by unique employee (key: legajo if available, else normalized name)
+  // 1. Pass 1: Build bidirectional lookup maps between names and legajos across all records
+  const nameToLegajo = new Map<string, string>();
+  const legajoToName = new Map<string, string>();
+
+  for (const rec of records) {
+    const rawLeg = (rec.legajo || '').trim();
+    const rawName = (rec.employeeName || '').trim();
+    const normName = rawName.toUpperCase().replace(/\s+/g, ' ');
+    const hasValidLegajo = rawLeg && rawLeg !== 'S/L' && rawLeg !== '0' && /\d/.test(rawLeg);
+    const hasValidName = rawName && !rawName.toLowerCase().startsWith('empleado sin nombre') && rawName.length >= 3;
+
+    if (hasValidLegajo && hasValidName) {
+      if (!nameToLegajo.has(normName)) {
+        nameToLegajo.set(normName, rawLeg);
+      }
+      if (!legajoToName.has(rawLeg) || rawName.length > legajoToName.get(rawLeg)!.length) {
+        legajoToName.set(rawLeg, rawName);
+      }
+    }
+  }
+
+  // 2. Pass 2: Reconcile records and group by canonical employee key
   const employeeMap = new Map<string, { employee: Employee; records: AttendanceRecord[] }>();
 
   for (const rec of records) {
-    const cleanLeg = (rec.legajo || '').trim();
-    const cleanName = (rec.employeeName || '').trim();
-    const hasRealLegajo = cleanLeg && cleanLeg !== 'S/L' && cleanLeg !== '0' && cleanLeg.length > 0;
-    const key = hasRealLegajo ? `LEG_${cleanLeg}` : `NAME_${cleanName.toUpperCase()}`;
+    let cleanLeg = (rec.legajo || '').trim();
+    let cleanName = (rec.employeeName || '').trim();
+    const normName = cleanName.toUpperCase().replace(/\s+/g, ' ');
+
+    // Reconcile missing legajo from known employee name
+    if ((!cleanLeg || cleanLeg === 'S/L' || cleanLeg === '0') && nameToLegajo.has(normName)) {
+      cleanLeg = nameToLegajo.get(normName)!;
+      rec.legajo = cleanLeg;
+    }
+
+    // Reconcile missing or generic name from known legajo
+    if ((!cleanName || cleanName.toLowerCase().startsWith('empleado sin nombre') || cleanName.toLowerCase().startsWith('empleado ')) && legajoToName.has(cleanLeg)) {
+      cleanName = legajoToName.get(cleanLeg)!;
+      rec.employeeName = cleanName;
+    }
+
+    const hasRealLegajo = cleanLeg && cleanLeg !== 'S/L' && cleanLeg !== '0' && /\d/.test(cleanLeg);
+    const key = hasRealLegajo ? `EMP_${cleanLeg}` : `NAME_${cleanName.toUpperCase().replace(/\s+/g, ' ')}`;
 
     if (!employeeMap.has(key)) {
       employeeMap.set(key, {
         employee: {
           id: key,
-          name: cleanName || (hasRealLegajo ? `Empleado ${cleanLeg}` : 'Empleado'),
+          name: cleanName || (hasRealLegajo ? `Empleado ${cleanLeg}` : 'Empleado Sin Nombre'),
           legajo: cleanLeg || 'S/L',
         },
         records: [],
       });
     } else {
       const existing = employeeMap.get(key)!;
-      // If current name is better/longer, use it
-      if (cleanName && cleanName.length > existing.employee.name.length) {
+      // If current name is more descriptive, keep it
+      if (cleanName && cleanName.length > existing.employee.name.length && !cleanName.toLowerCase().startsWith('empleado ')) {
         existing.employee.name = cleanName;
       }
       if (hasRealLegajo && (existing.employee.legajo === 'S/L' || !existing.employee.legajo)) {
@@ -146,15 +181,19 @@ export function aggregateAttendanceData(
         }
       }
 
+      // Filter out redundant 0-minute duplicate taps (e.g. 14:09 - 14:09) if the day has productive working intervals
+      const productiveIntervals = intervals.filter(i => i.durationMinutes > 0);
+      const cleanIntervals = productiveIntervals.length > 0 ? productiveIntervals : intervals;
+
       // Determine first entry and last exit of the day
       let firstEntryMinutes: number | null = null;
       let firstEntryFormatted = '--:--';
       let lastExitMinutes: number | null = null;
       let lastExitFormatted = '--:--';
 
-      if (intervals.length > 0) {
-        const allEntries = intervals.map(i => i.entryMinutes);
-        const allExits = intervals.map(i => i.exitMinutes);
+      if (cleanIntervals.length > 0) {
+        const allEntries = cleanIntervals.map(i => i.entryMinutes);
+        const allExits = cleanIntervals.map(i => i.exitMinutes);
         firstEntryMinutes = Math.min(...allEntries);
         firstEntryFormatted = minutesToTimeString(firstEntryMinutes, false);
         lastExitMinutes = Math.max(...allExits);
@@ -183,7 +222,7 @@ export function aggregateAttendanceData(
       if (metrics.hasOvertime) {
         dayStatus = 'overtime';
         daysWithOvertimeCount++;
-      } else if (intervals.length === 0 && rawPunches.length === 1) {
+      } else if (cleanIntervals.length === 0 && rawPunches.length === 1) {
         dayStatus = 'incomplete';
         daysWithErrorsCount++;
       }
@@ -202,7 +241,7 @@ export function aggregateAttendanceData(
         normalWorkdayEndFormatted: metrics.normalWorkdayEndFormatted,
         lastExitMinutes,
         lastExitFormatted,
-        intervals,
+        intervals: cleanIntervals,
         rawIntervalsCount: dayRecs.length,
         totalWorkedMinutes: dayWorkedMinutes,
         totalWorkedFormatted: minutesToTimeString(dayWorkedMinutes),
@@ -212,8 +251,8 @@ export function aggregateAttendanceData(
         overtimeFormatted: metrics.overtimeFormatted,
         status: dayStatus,
         hasOvertime: metrics.hasOvertime,
-        hasErrors: intervals.length === 0 && rawPunches.length === 1,
-        errorNotes: intervals.length === 0 && rawPunches.length === 1 ? [`Fichada única: ${rawPunches[0].formatted} (sin salida)`] : [],
+        hasErrors: cleanIntervals.length === 0 && rawPunches.length === 1,
+        errorNotes: cleanIntervals.length === 0 && rawPunches.length === 1 ? [`Fichada única: ${rawPunches[0].formatted} (sin salida)`] : [],
       });
     }
 

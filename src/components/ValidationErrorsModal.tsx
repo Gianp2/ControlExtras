@@ -1,6 +1,7 @@
 import React from 'react';
 import { X, AlertTriangle, AlertCircle, CheckCircle2, ShieldAlert } from 'lucide-react';
 import { ValidationError } from '../types';
+import { useLockBodyScroll } from '../utils/useLockBodyScroll';
 
 interface ValidationErrorsModalProps {
   isOpen: boolean;
@@ -13,13 +14,18 @@ export const ValidationErrorsModal: React.FC<ValidationErrorsModalProps> = ({
   onClose,
   errors,
 }) => {
+  useLockBodyScroll(isOpen);
+
   if (!isOpen) return null;
 
   const errorCount = errors.filter(e => e.severity === 'error').length;
   const warningCount = errors.filter(e => e.severity === 'warning').length;
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6">
+    <div
+      className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6"
+      onClick={onClose}
+    >
       <div
         className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-4xl overflow-hidden flex flex-col max-h-[85vh]"
         onClick={(e) => e.stopPropagation()}

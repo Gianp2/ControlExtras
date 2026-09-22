@@ -1,5 +1,6 @@
 import React from 'react';
 import { X, CheckCircle, Clock, Flame, Calculator, Sparkles } from 'lucide-react';
+import { useLockBodyScroll } from '../utils/useLockBodyScroll';
 
 interface RulesExplainerModalProps {
   isOpen: boolean;
@@ -10,10 +11,15 @@ export const RulesExplainerModal: React.FC<RulesExplainerModalProps> = ({
   isOpen,
   onClose,
 }) => {
+  useLockBodyScroll(isOpen);
+
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6">
+    <div
+      className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6"
+      onClick={onClose}
+    >
       <div
         className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-3xl overflow-hidden flex flex-col max-h-[90vh]"
         onClick={(e) => e.stopPropagation()}

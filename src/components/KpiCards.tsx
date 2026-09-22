@@ -28,50 +28,51 @@ export const KpiCards: React.FC<KpiCardsProps> = ({
   const totalNormalHoursStr = `${Math.floor(totalNormalMinutes / 60)}:${String(totalNormalMinutes % 60).padStart(2, '0')}`;
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5">
       {/* 1. Total Empleados */}
       <button
         type="button"
+        id="kpi-total-employees"
         onClick={() => onFilterByStatus?.('all')}
-        className={`p-3.5 rounded-xl border text-left transition-all ${
+        className={`p-4 rounded-2xl border text-left transition-all duration-200 cursor-pointer hover:-translate-y-0.5 hover:shadow-md ${
           currentStatusTab === 'all'
-            ? 'bg-slate-900 border-slate-900 text-white shadow-sm'
-            : 'bg-white border-slate-200 hover:border-slate-300 text-slate-800 shadow-2xs'
+            ? 'bg-slate-900 border-slate-900 text-white shadow-sm ring-2 ring-slate-800'
+            : 'bg-white border-slate-200/90 hover:border-slate-300 text-slate-800 shadow-2xs'
         }`}
       >
         <div className="flex items-center justify-between">
-          <span className={`text-[11px] font-semibold uppercase tracking-wider ${currentStatusTab === 'all' ? 'text-slate-300' : 'text-slate-500'}`}>
+          <span className={`text-[10px] font-bold uppercase tracking-wider ${currentStatusTab === 'all' ? 'text-slate-300' : 'text-slate-500'}`}>
             Empleados
           </span>
-          <div className={`p-1.5 rounded-lg ${currentStatusTab === 'all' ? 'bg-slate-800 text-slate-200' : 'bg-slate-100 text-slate-600'}`}>
-            <Users className="w-3.5 h-3.5" />
+          <div className={`p-2 rounded-xl ${currentStatusTab === 'all' ? 'bg-slate-800 text-emerald-400' : 'bg-slate-100 text-slate-700'}`}>
+            <Users className="w-4 h-4" />
           </div>
         </div>
-        <div className="mt-2 flex items-baseline gap-1.5">
-          <span className={`text-2xl font-bold tracking-tight ${currentStatusTab === 'all' ? 'text-white' : 'text-slate-900'}`}>
+        <div className="mt-3 flex items-baseline gap-1.5">
+          <span className={`text-2xl sm:text-3xl font-black tracking-tight ${currentStatusTab === 'all' ? 'text-white' : 'text-slate-900'}`}>
             {totalEmployees}
           </span>
-          <span className={`text-[11px] ${currentStatusTab === 'all' ? 'text-slate-400' : 'text-slate-500'}`}>
+          <span className={`text-xs ${currentStatusTab === 'all' ? 'text-slate-400' : 'text-slate-500'}`}>
             en nómina
           </span>
         </div>
       </button>
 
       {/* 2. Horas Trabajadas */}
-      <div className="p-3.5 rounded-xl border bg-white border-slate-200 text-left shadow-2xs">
+      <div className="p-4 rounded-2xl border bg-white border-slate-200/90 text-left shadow-2xs transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
         <div className="flex items-center justify-between">
-          <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
+          <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
             Hs. Trabajadas
           </span>
-          <div className="p-1.5 rounded-lg bg-blue-50 text-blue-700">
-            <Clock className="w-3.5 h-3.5" />
+          <div className="p-2 rounded-xl bg-sky-50 text-sky-700 border border-sky-100">
+            <Clock className="w-4 h-4" />
           </div>
         </div>
-        <div className="mt-2 flex items-baseline gap-1.5 font-mono">
-          <span className="text-2xl font-bold tracking-tight text-blue-950">
+        <div className="mt-3 flex items-baseline gap-1.5 font-mono">
+          <span className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900">
             {metadata.totalWorkedHoursStr}
           </span>
-          <span className="text-[11px] font-sans text-blue-600 font-medium">
+          <span className="text-xs font-sans text-sky-700 font-medium">
             totales
           </span>
         </div>
@@ -80,26 +81,27 @@ export const KpiCards: React.FC<KpiCardsProps> = ({
       {/* 3. Horas Normales (Base 9h) */}
       <button
         type="button"
+        id="kpi-normal-hours"
         onClick={() => onFilterByStatus?.('without_overtime')}
-        className={`p-3.5 rounded-xl border text-left transition-all ${
+        className={`p-4 rounded-2xl border text-left transition-all duration-200 cursor-pointer hover:-translate-y-0.5 hover:shadow-md ${
           currentStatusTab === 'without_overtime'
-            ? 'bg-emerald-950 border-emerald-800 text-white shadow-sm ring-2 ring-emerald-600/30'
-            : 'bg-white border-slate-200 hover:border-slate-300 text-slate-800 shadow-2xs'
+            ? 'bg-emerald-950 border-emerald-800 text-white shadow-sm ring-2 ring-emerald-600/40'
+            : 'bg-white border-slate-200/90 hover:border-slate-300 text-slate-800 shadow-2xs'
         }`}
       >
         <div className="flex items-center justify-between">
-          <span className={`text-[11px] font-semibold uppercase tracking-wider ${currentStatusTab === 'without_overtime' ? 'text-emerald-300' : 'text-slate-500'}`}>
+          <span className={`text-[10px] font-bold uppercase tracking-wider ${currentStatusTab === 'without_overtime' ? 'text-emerald-300' : 'text-slate-500'}`}>
             Hs. Normales
           </span>
-          <div className={`p-1.5 rounded-lg ${currentStatusTab === 'without_overtime' ? 'bg-emerald-900 text-emerald-300' : 'bg-emerald-50 text-emerald-700'}`}>
-            <CheckCircle2 className="w-3.5 h-3.5" />
+          <div className={`p-2 rounded-xl ${currentStatusTab === 'without_overtime' ? 'bg-emerald-900 text-emerald-300' : 'bg-emerald-50 text-emerald-700 border border-emerald-100'}`}>
+            <CheckCircle2 className="w-4 h-4" />
           </div>
         </div>
-        <div className="mt-2 flex items-baseline gap-1.5 font-mono">
-          <span className={`text-2xl font-bold tracking-tight ${currentStatusTab === 'without_overtime' ? 'text-white' : 'text-emerald-950'}`}>
+        <div className="mt-3 flex items-baseline gap-1.5 font-mono">
+          <span className={`text-2xl sm:text-3xl font-black tracking-tight ${currentStatusTab === 'without_overtime' ? 'text-white' : 'text-emerald-900'}`}>
             {totalNormalHoursStr}
           </span>
-          <span className={`text-[11px] font-sans ${currentStatusTab === 'without_overtime' ? 'text-emerald-300' : 'text-emerald-700'} font-medium`}>
+          <span className={`text-xs font-sans ${currentStatusTab === 'without_overtime' ? 'text-emerald-300' : 'text-emerald-700'} font-semibold`}>
             base 9h
           </span>
         </div>
@@ -108,27 +110,28 @@ export const KpiCards: React.FC<KpiCardsProps> = ({
       {/* 4. Horas Extras */}
       <button
         type="button"
+        id="kpi-overtime-hours"
         onClick={() => onFilterByStatus?.('with_overtime')}
-        className={`p-3.5 rounded-xl border text-left transition-all ${
+        className={`p-4 rounded-2xl border text-left transition-all duration-200 cursor-pointer hover:-translate-y-0.5 hover:shadow-md ${
           currentStatusTab === 'with_overtime'
-            ? 'bg-amber-950 border-amber-800 text-white shadow-sm ring-2 ring-amber-500/30'
-            : 'bg-amber-50/50 border-amber-200/80 hover:border-amber-300 text-slate-800 shadow-2xs'
+            ? 'bg-amber-950 border-amber-700 text-white shadow-sm ring-2 ring-amber-500/40'
+            : 'bg-gradient-to-b from-amber-50/60 to-amber-50/20 border-amber-200/80 hover:border-amber-300 text-slate-800 shadow-2xs'
         }`}
       >
         <div className="flex items-center justify-between">
-          <span className={`text-[11px] font-semibold uppercase tracking-wider ${currentStatusTab === 'with_overtime' ? 'text-amber-300' : 'text-amber-800'}`}>
+          <span className={`text-[10px] font-bold uppercase tracking-wider ${currentStatusTab === 'with_overtime' ? 'text-amber-300' : 'text-amber-900'}`}>
             Horas Extras
           </span>
-          <div className={`p-1.5 rounded-lg ${currentStatusTab === 'with_overtime' ? 'bg-amber-900 text-amber-300' : 'bg-amber-100 text-amber-800'}`}>
-            <Flame className="w-3.5 h-3.5" />
+          <div className={`p-2 rounded-xl ${currentStatusTab === 'with_overtime' ? 'bg-amber-900 text-amber-300' : 'bg-amber-100 text-amber-800 border border-amber-200'}`}>
+            <Flame className="w-4 h-4 text-amber-600 animate-pulse" />
           </div>
         </div>
-        <div className="mt-2 flex items-baseline gap-1.5 font-mono">
-          <span className={`text-2xl font-bold tracking-tight ${currentStatusTab === 'with_overtime' ? 'text-white' : 'text-amber-950'}`}>
+        <div className="mt-3 flex items-baseline gap-1.5 font-mono">
+          <span className={`text-2xl sm:text-3xl font-black tracking-tight ${currentStatusTab === 'with_overtime' ? 'text-white' : 'text-amber-950'}`}>
             {metadata.totalOvertimeHoursStr}
           </span>
-          <span className={`text-[11px] font-sans ${currentStatusTab === 'with_overtime' ? 'text-amber-300' : 'text-amber-700'} font-medium`}>
-            acumuladas
+          <span className={`text-xs font-sans ${currentStatusTab === 'with_overtime' ? 'text-amber-300' : 'text-amber-800'} font-semibold`}>
+            extras
           </span>
         </div>
       </button>
@@ -136,51 +139,60 @@ export const KpiCards: React.FC<KpiCardsProps> = ({
       {/* 5. Empleados con Extras */}
       <button
         type="button"
+        id="kpi-employees-with-overtime"
         onClick={() => onFilterByStatus?.('with_overtime')}
-        className="p-3.5 rounded-xl border bg-white border-slate-200 hover:border-slate-300 text-left shadow-2xs transition-all"
+        className="p-4 rounded-2xl border bg-white border-slate-200/90 hover:border-slate-300 text-left shadow-2xs transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md cursor-pointer"
       >
         <div className="flex items-center justify-between">
-          <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
+          <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
             Con Extras
           </span>
-          <div className="p-1.5 rounded-lg bg-slate-100 text-slate-600">
-            <UserCheck className="w-3.5 h-3.5" />
+          <div className="p-2 rounded-xl bg-slate-100 text-slate-700">
+            <UserCheck className="w-4 h-4" />
           </div>
         </div>
-        <div className="mt-2 flex items-baseline gap-1.5">
-          <span className="text-2xl font-bold tracking-tight text-slate-900">
+        <div className="mt-3 flex items-baseline gap-1.5">
+          <span className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900">
             {employeesWithOvertime}
           </span>
-          <span className="text-[11px] text-slate-500 font-medium">
+          <span className="text-xs text-slate-500 font-semibold">
             ({overtimePercentage}%)
           </span>
+        </div>
+        {/* Visual progress bar */}
+        <div className="w-full bg-slate-100 rounded-full h-1.5 mt-2 overflow-hidden">
+          <div
+            className="bg-amber-500 h-full rounded-full transition-all duration-300"
+            style={{ width: `${Math.min(100, overtimePercentage)}%` }}
+          />
         </div>
       </button>
 
       {/* 6. Observaciones / Errores */}
       <button
         type="button"
+        id="kpi-observations"
         onClick={onOpenErrors}
-        className={`p-3.5 rounded-xl border text-left transition-all ${
+        className={`p-4 rounded-2xl border text-left transition-all duration-200 cursor-pointer hover:-translate-y-0.5 hover:shadow-md ${
           errors.length > 0
-            ? 'bg-rose-50/80 border-rose-200 hover:border-rose-300 text-rose-900 shadow-2xs'
-            : 'bg-white border-slate-200 hover:border-slate-300 text-slate-800 shadow-2xs'
+            ? 'bg-rose-50/80 border-rose-200/90 hover:border-rose-300 text-rose-900 shadow-2xs'
+            : 'bg-white border-slate-200/90 hover:border-slate-300 text-slate-800 shadow-2xs'
         }`}
       >
         <div className="flex items-center justify-between">
-          <span className={`text-[11px] font-semibold uppercase tracking-wider ${errors.length > 0 ? 'text-rose-800' : 'text-slate-500'}`}>
+          <span className={`text-[10px] font-bold uppercase tracking-wider ${errors.length > 0 ? 'text-rose-800' : 'text-slate-500'}`}>
             Observaciones
           </span>
-          <div className={`p-1.5 rounded-lg ${errors.length > 0 ? 'bg-rose-100 text-rose-700' : 'bg-slate-100 text-slate-600'}`}>
-            <AlertTriangle className="w-3.5 h-3.5" />
+          <div className={`p-2 rounded-xl ${errors.length > 0 ? 'bg-rose-100 text-rose-700 border border-rose-200' : 'bg-slate-100 text-slate-600'}`}>
+            <AlertTriangle className="w-4 h-4" />
           </div>
         </div>
-        <div className="mt-2 flex items-baseline gap-1.5">
-          <span className={`text-2xl font-bold tracking-tight ${errors.length > 0 ? 'text-rose-950' : 'text-slate-900'}`}>
+        <div className="mt-3 flex items-baseline gap-1.5">
+          <span className={`text-2xl sm:text-3xl font-black tracking-tight ${errors.length > 0 ? 'text-rose-950' : 'text-slate-900'}`}>
             {errors.length}
           </span>
-          <span className={`text-[11px] font-medium ${errors.length > 0 ? 'text-rose-700' : 'text-slate-500'}`}>
-            {errors.length === 0 ? 'limpio' : 'para revisar'}
+          <span className={`text-xs font-semibold ${errors.length > 0 ? 'text-rose-700' : 'text-slate-500'}`}>
+            {errors.length === 0 ? 'sin alertas' : 'para revisar'}
           </span>
         </div>
       </button>

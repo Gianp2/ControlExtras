@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, CheckCircle2, XCircle, Play, ShieldCheck, Clock, Calculator, RotateCcw } from 'lucide-react';
 import { runCalculationTests, TestSuiteSummary } from '../services/calculationService';
+import { useLockBodyScroll } from '../utils/useLockBodyScroll';
 
 interface TestSuiteModalProps {
   isOpen: boolean;
@@ -10,6 +11,8 @@ interface TestSuiteModalProps {
 export const TestSuiteModal: React.FC<TestSuiteModalProps> = ({ isOpen, onClose }) => {
   const [suiteResult, setSuiteResult] = useState<TestSuiteSummary | null>(null);
   const [isRunning, setIsRunning] = useState<boolean>(false);
+
+  useLockBodyScroll(isOpen);
 
   const executeTests = () => {
     setIsRunning(true);
@@ -29,7 +32,10 @@ export const TestSuiteModal: React.FC<TestSuiteModalProps> = ({ isOpen, onClose 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6 animate-fadeIn">
+    <div
+      className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6 animate-fadeIn"
+      onClick={onClose}
+    >
       <div
         className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-4xl overflow-hidden flex flex-col max-h-[90vh] animate-scaleIn"
         onClick={(e) => e.stopPropagation()}
